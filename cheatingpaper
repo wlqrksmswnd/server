@@ -1,0 +1,49 @@
+-dns 서버
+su -
+apt –y install bind9 bind9utils
+cd /etc/bind
+mv named.conf.options named.conf.options.org
+cp named.conf.options.org named.conf.options
+vi named.conf.options
+:set nu
+(21번줄부터)
+	dnssec-validation no;
+	recursion yes;
+	allow-query { any; };
+	
+	forwarders {
+		8.8.8.8;
+		1.1.1.1;
+	};
+	forward only;
+	listen-on-v6 { any; };
+ifconfig ens33 <- ip 주소 확인
+vi /etc/resolv.conf
+(기존 nameserver ip 주소 주석 처리하기)
+nameserver {니 ip 주소}
+systemctl restart named
+systemctl enable named
+systemctl status named <- 서버 상태 확인
+( nslookup server 해서 한번 확인하기 )
+named-checkconf /etc/bind/named.conf.options
+
+-마스터 서버
+cd /etc/bind
+vi named.conf.local
+zone "woojak.com" IN {
+		type master;
+		file "/etc/bind/db.woojak.com";
+	};
+cp db.local db.woojak.local
+vi db.woojak.local
+(첨부파일 확인)
+named-checkzone woojak.com /etc/bind/db.woojak.com
+(오타 확인)
+-웹 서버
+apt -y install apache2
+systemctl restart apache2
+systemctl enable apache2
+(혹시나를 대비한 아파치 재시작)
+https://{니 ip 주소} 들어가서 확인하기
+cd /var/www/html
+vi index.html
