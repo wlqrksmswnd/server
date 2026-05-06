@@ -34,8 +34,8 @@ zone "woojak.com" IN {
 		type master;
 		file "/etc/bind/db.woojak.com";
 	};
-cp db.local db.woojak.local
-vi db.woojak.local
+cp db.local db.woojak.com
+vi db.woojak.com
 (첨부파일 확인)
 named-checkzone woojak.com /etc/bind/db.woojak.com
 (오타 확인)
@@ -44,6 +44,8 @@ apt -y install apache2
 systemctl restart apache2
 systemctl enable apache2
 (혹시나를 대비한 아파치 재시작)
-https://{니 ip 주소} 들어가서 확인하기
+systemctl restart named
+systemctl enable named
+www.woojak.com 들어가서 확인하기
 cd /var/www/html
 vi index.html
